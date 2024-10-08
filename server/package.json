@@ -26,9 +26,10 @@
   "scripts": {
     "dev": "nodemon .",
     "start": "node .",
-    "test": ""
+    "test": "jest"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.7"
   },
   "dependencies": {
