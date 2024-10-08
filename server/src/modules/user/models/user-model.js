@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import personSchema from "../../../shared/models/person/person-module.js";
+import personSchema from "../../../shared/models/person/person-model.js";
 
 const userSchema = new Schema({
     userId: {
