@@ -1,9 +1,8 @@
 import express from 'express';
-import {MongoClient} from 'mongodb';
-
+import mongoose from 'mongoose';
 
 const app=express();
-const PORT=8000;
+
 
 const DB_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME;
 const DB_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD;
@@ -16,15 +15,26 @@ const PORTAL_HOST = process.env.PORTAL_HOST
 const PORTAL_PORT = process.env.PORTAL_PORT
 
 const URL = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
-const client = new MongoClient(URL);
 
 
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+// Create a User Model
+const User = mongoose.model('User', userSchema);
+
+console.log(User);
 
 async function main() {
     try{
-    await client.connect();
-    const db = client.db(DB);
-    const collection = db.collection(DB_COLLECTION);
+      await mongoose.connect(URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
     console.log('Connected successfully to MongoDB');
     app.listen(PORTAL_PORT, () => {
       console.log(`Server running on Port ${PORTAL_PORT}`);
