@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { userRoutes } from './modules/user/routes/user-route.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { adminRoutes } from './modules/admin/routes/admin-route.js';
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
   res.send('Connected to Portal Server...')
   })
 app.use('/',userRoutes);
-
+app.use('/',adminRoutes);
 
 
 async function main() {
