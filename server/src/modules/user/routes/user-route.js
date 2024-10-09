@@ -1,9 +1,9 @@
 import express from "express";
-import { registerUser, loginUser, uploadAssignment, fetchAllAdmins } from "../controllers/user-controller.js";
-
+import { uploadAssignment, fetchAllAdmins } from "../controllers/user-controller.js";
+import { register,login } from "../../../shared/auth/authController.js";
 export const userRoutes = express.Router();
 
-userRoutes.post("/register", registerUser);
-userRoutes.post("/login", loginUser);
+userRoutes.post("/register", register);
+userRoutes.post("/login", login);
 userRoutes.post("/upload", uploadAssignment);
 userRoutes.get("/admins", fetchAllAdmins);
