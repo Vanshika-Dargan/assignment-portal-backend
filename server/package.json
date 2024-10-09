@@ -43,6 +43,7 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
     "mongoose-sequence": "^6.0.1",
+    "supertest": "^7.0.0",
     "uuid": "^10.0.0"
   }
 }

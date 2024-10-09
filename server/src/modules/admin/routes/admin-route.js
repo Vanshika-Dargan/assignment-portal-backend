@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login } from "../../../shared/auth/authController.js";
+import { register, login } from "../../../shared/auth/auth-controller.js";
 import { getAssignmentsTagged,updateAssignmentStatus } from "../controllers/admin-controller.js";
 export const adminRoutes = express.Router();
 
