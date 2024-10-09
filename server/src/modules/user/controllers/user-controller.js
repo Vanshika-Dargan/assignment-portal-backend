@@ -1,7 +1,7 @@
 import UserModel from "../models/user-model.js";
 import AdminModel from "../../admin/models/admin-model.js";
-
-
+import { oauthClient } from "../../../shared/google-oath-config.js";
+import axios from 'axios';
 
 export const registerUser = async (req, res) => {
   try {
@@ -16,10 +16,19 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    res.status(200).json({ message: "Login successful" });
+    const { type } = req.body;
+    if(type==='google'){
+    const {code} = req.body;
+    const {tokens} = await oauthClient.getToken(code);
+    oauthClient.setCredentials(tokens);
+
+    const googleUserData=await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`);
+    return res.status(200).json({ data: googleUserData.data});
+    }
+    else{
+    }
   } catch (error) {
-    res.status(400).json({ message: "Login failed", error });
+    return res.status(400).json({ message: "Login failed", error });
   }
 };
 
