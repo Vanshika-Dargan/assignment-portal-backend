@@ -12,7 +12,7 @@ const attachmentSchema = new mongoose.Schema({
 }, { _id: false });
 
 const submissionSchema = new mongoose.Schema({
-    student: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
@@ -97,5 +97,5 @@ assignmentSchema.pre('save', function (next) {
 });
 
 
-const Assignment = mongoose.model('Assignment', assignmentSchema);
-module.exports = Assignment;
+const AssignmentModel = mongoose.model('Assignment', assignmentSchema);
+export default AssignmentModel;
