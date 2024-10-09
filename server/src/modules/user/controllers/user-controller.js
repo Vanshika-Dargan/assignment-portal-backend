@@ -17,13 +17,34 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { type } = req.body;
+    const loginMethod = type==='google'?'google':'custom';
     if(type==='google'){
     const {code} = req.body;
     const {tokens} = await oauthClient.getToken(code);
     oauthClient.setCredentials(tokens);
 
     const googleUserData=await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`);
-    return res.status(200).json({ data: googleUserData.data});
+
+    const {email,name,picture}=googleUserData.data;
+
+    // const email ='vanshikadargan.vd@gmail.com';
+    // const name= 'vanshika'
+
+    let user=await UserModel.findOne({email});
+    console.log(user);
+    try {
+      if (!user) {
+        user = await UserModel.create({
+          email,
+          name,
+          loginMethod,
+        });
+      }
+    } catch (error) {
+      console.error('Error creating user:', error);
+      return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+    return res.status(200).json({ user: user});
     }
     else{
     }

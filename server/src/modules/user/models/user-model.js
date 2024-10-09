@@ -1,15 +1,43 @@
 import mongoose, { Schema } from "mongoose";
-import personSchema from "../../../shared/models/person/person-model.js";
+import { v4 as uuidv4 } from 'uuid';
 
 const userSchema = new Schema({
     userId: {
         type: String,
-        required: true,
+        default: uuidv4,
         unique: true,
       },
-});
+      id: {
+        type: Number,
+        unique: true,
+      },
+      password: { 
+        type: String, 
+        required: true, 
+        minLength: 8 
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: /.+\@.+\..+/,
+      },
+      picture: {
+        type: String, 
+        required: false, 
+      },
+      loginMethod: {
+        type: String,
+        enum: ['google', 'custom'], 
+      },
+},
+{ timestamps: true }
+);
 
-const userSchemaExtended = personSchema.add(userSchema);
-const UserModel = mongoose.model("User", userSchemaExtended);
+const UserModel = mongoose.model("User", userSchema);
 
 export default UserModel;
