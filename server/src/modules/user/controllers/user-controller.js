@@ -3,19 +3,43 @@ import AdminModel from "../../admin/models/admin-model.js";
 import { oauthClient } from "../../../shared/google-oath-config.js";
 import axios from 'axios';
 import AssignmentModel from "../../assignment/models/assignment-model.js";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res,next) => {
+  const {name,email,password,confirmPassword} = req.body;
   try {
-    const newUser = new UserModel(req.body);
-    await newUser.save();
-    res.status(201).json({ message: "User registered successfully", user: newUser });
+
+    const existingUser = await UserModel.findOne({email});
+    if(existingUser){
+      return res.status(404).json({message:'User already exists. Please Log In'})
+    }
+    if(password!=confirmPassword){
+      return res.status(400).json({message:'Passwords dont match'})
+    }
+    let hashedPassword = ''
+    bcrypt.hash(password,10,function(err,hash){
+       hashedPassword = hash;
+    })
+    
+    const user = await UserModel.create({
+      email,
+      name,
+      password: hashedPassword
+    });
+    const {_id,userId} =user;
+    const token = jwt.sign({_id,email,userId},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRY});
+    res.status(201).json({ message: "user registeration success", data: {
+    token,
+    user
+    } });
   } catch (error) {
-    res.status(400).json({ message: "Error registering user", error });
+    next(error);
   }
 };
 
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
   try {
     const { type } = req.body;
     const loginMethod = type==='google'?'google':'custom';
@@ -28,29 +52,24 @@ export const loginUser = async (req, res) => {
 
     const {email,name,picture}=googleUserData.data;
 
-    // const email ='vanshikadargan.vd@gmail.com';
-    // const name= 'vanshika'
-
     let user=await UserModel.findOne({email});
-    console.log(user);
-    try {
       if (!user) {
         user = await UserModel.create({
           email,
           name,
+          picture,
           loginMethod,
         });
-      }
-    } catch (error) {
-      console.error('Error creating user:', error);
-      return res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
-    return res.status(200).json({ user: user});
+        const {_id,userId} = user;
+        const token = jwt.sign({_id,email,userId},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRY});
+    return res.status(201).json({ message: 'user login successful', data:{token,user}});
     }
     else{
+      
     }
+  }
   } catch (error) {
-    return res.status(400).json({ message: "Login failed", error });
+    next(error)
   }
 };
 
