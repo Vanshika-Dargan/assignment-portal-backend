@@ -1,6 +1,5 @@
 # Assignment Portal Backend
 
-
 ## Setup with Docker
 
 1. add the following file in db
@@ -125,6 +124,17 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
 ```http
  GET /portal/v1/user/admins
 ```
+
+## Package Info
+
+1. **bcrypt** - Password hashing.
+2. **joi** - Input validation.
+3. **jwt** - Token creation/verification.
+4. **express** - Web server framework.
+5. **mongoose** - MongoDB ORM.
+6. **jest** - Unit testing framework.
+7. **axios** - HTTP client for API requests.
+8. **googleapis** - Google OAuth and API integration.
 
 
 ## Frontend
