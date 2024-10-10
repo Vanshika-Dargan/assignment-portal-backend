@@ -5,14 +5,14 @@ import axios from 'axios';
 import bcrypt from 'bcrypt';
 import { modifyResData } from "../../utilities/response-modifier.js";
 import { generateToken } from "../../utilities/token.js";
-import { registerSchema} from "../validations/auth-validation.js";
+import { registerSchema, loginSchema} from "../validations/auth-validation.js";
 import customError from "../../error_handler/custom-error.js";
 
 
 export const register = async (req, res, next) => {
 
   const result = registerSchema.validate(req.body);
-  const { name, email, password, confirmPassword, role } = req.body;
+  const { name, email, password, role } = req.body;
 
   if (result.error) {
     const errorMessages = result.error.details.map(err => err.message);
@@ -95,6 +95,13 @@ export const login = async (req, res, next) => {
     }
   }
     else{
+      const { email,password } = req.body;
+      const result = loginSchema.validate({email,password})
+      if (result.error) {
+        const errorMessages = result.error.details.map(err => err.message);
+        const error= new customError(400,errorMessages);
+        next(error);
+      }
       let model = await Model.findOne({ email });
       if (!model) {
           return res.status(404).json({ message: 'User not found. Please register.' });
@@ -106,7 +113,8 @@ export const login = async (req, res, next) => {
       }
       const {_id} = model;
       const token = generateToken({[typeId]: _id,email});
-      return res.status(201).json({ message: 'User logged in successfully', data: { token, data:model } });
+      model = modifyResData(model,typeId);
+      return res.status(200).json({ message: 'User logged in successfully', data: { token, data:model } });
 
       
     }
