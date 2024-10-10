@@ -4,7 +4,7 @@ import AssignmentModel from "../../assignment/models/assignment-model.js";
 import { modifyResData } from "../../../shared/utilities/response-modifier.js";
 
 export const uploadAssignment = async (req, res,next) => {
-  const { userId, assignmentId, assignmentContent, adminId } = req.body;
+  const { userId, assignmentId, assignmentContent, adminId, fileName, fileUrl } = req.body;
   
   try {
     // Check if user exists
@@ -30,7 +30,6 @@ export const uploadAssignment = async (req, res,next) => {
     if (hasUploaded) {
       return res.status(400).json({ message: "User has already uploaded this assignment" });
     }
-    
     // Check if submission date is valid
     if (new Date() > assignment.dueDate) {
       return res.status(400).json({ message: "Submission date exceeds due date" });
@@ -47,6 +46,10 @@ export const uploadAssignment = async (req, res,next) => {
       submittedAt: new Date(),
       content: assignmentContent,
       submittedTo: adminId,
+      attachementSchema: {
+        fileName,
+        fileUrl
+      }
     };
 
 
