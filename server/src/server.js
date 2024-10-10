@@ -17,16 +17,20 @@ const PORTAL_PORT = process.env.PORTAL_PORT
 // const URL = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
 const URL = process.env.MONGO_TEST;
 const app=express();
+const router = express.Router();
+
 app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Connected to Portal Server...')
   })
-app.use('/',userRoutes);
-app.use('/',adminRoutes);
-app.use('/portal/v1/assignment',assignmentRoutes);
 
+router.use('/user', userRoutes);
+router.use('/admin', adminRoutes);
+router.use('/assignment', assignmentRoutes);
+
+app.use('/portal/v1', router);
 
 async function main() {
     try{
