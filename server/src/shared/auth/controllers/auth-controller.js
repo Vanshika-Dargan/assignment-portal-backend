@@ -5,20 +5,21 @@ import axios from 'axios';
 import bcrypt from 'bcrypt';
 import { excludeFields } from "../../utilities/response-modifier.js";
 import { generateToken } from "../../utilities/token.js";
-import { authSchema } from "../validations/auth-validation.js";
+import { registerSchema} from "../validations/auth-validation.js";
+import customError from "../../error_handler/custom-error.js";
 
 
 export const register = async (req, res, next) => {
-  const { name, email, password, confirmPassword, role } = req.body;
-  const result = authSchema.validate({name, email,password});
 
-if (result.error) {
-  return res.status(400).json({error:result.error.details});
-} 
-  
-  if(!role){
-    return res.status(404).json({message:'role is required, youare user or admin?'});
+  const result = registerSchema.validate(req.body);
+  const { name, email, password, confirmPassword, role } = req.body;
+
+  if (result.error) {
+    const errorMessages = result.error.details.map(err => err.message);
+    const error= new customError(400,errorMessages);
+    next(error);
   }
+  
   let Model = role === 'admin' ? AdminModel : UserModel;
 
   try {
@@ -26,11 +27,7 @@ if (result.error) {
     if (existingUser) {
       return res.status(409).json({ message: 'User already exists. Please log in.' });
     }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
 
