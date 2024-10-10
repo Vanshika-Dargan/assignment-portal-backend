@@ -56,14 +56,14 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { type,role } = req.body;
+    const { type,role,email,password,code } = req.body;
     if(!role){
       return res.status(404).json({message:'role is required, youare user or admin?'});
     }
     const loginMethod = type==='google'?'google':'custom';
     let Model = role === 'admin' ? AdminModel : UserModel;
+
     if(type==='google'){
-    const {code} = req.body;
     const {tokens} = await oauthClient.getToken(code);
     oauthClient.setCredentials(tokens);
 
@@ -72,21 +72,35 @@ export const login = async (req, res, next) => {
     const {email,name,picture}=googleUserData.data;
 
     let model=await Model.findOne({email});
-      if (!user) {
-        user = await Model.create({
+      if (!model) {
+        model = await Model.create({
           email,
           name,
           picture,
           loginMethod,
         });
         const {_id} = model;
-        const token = generateToken({_id,email});
-    return res.status(201).json({ message: 'user login successful', data:{token,user}});
-    }
-    else{
-      
+        const token = generateToken({[typeId]: _id,email});
+    return res.status(201).json({ message: 'user login successful', data:{token,data:model}});
     }
   }
+    else{
+      let model = await Model.findOne({ email });
+      if (!model) {
+          return res.status(404).json({ message: 'User not found. Please register.' });
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+          return res.status(401).json({ message: 'Invalid password' });
+      }
+      const {_id} = model;
+      const token = generateToken({[typeId]: _id,email});
+      return res.status(201).json({ message: 'User logged in successfully', data: { token, data:model } });
+
+      
+    }
+  
   } catch (error) {
     next(error)
   }
