@@ -138,7 +138,6 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
 | `description` | `string` | **Optional**|
 | `dueDate` | `string` | **Required** |
 | `maxMarks` | `string` | **Optional** |
-| `assignedBy` | `string` | **Required**|
 | `fileName` | `string` | **Optional** |
 | `fileUrl` | `string` | **Optional** |
 
