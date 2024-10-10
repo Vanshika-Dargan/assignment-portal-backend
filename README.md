@@ -58,6 +58,10 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
 
 ## API Reference
 
+| Header          | Type     | Description                             |
+| --------------- | -------- | --------------------------------------- |
+| Authorization   | string   | **Required**. Bearer token for authorization |
+
 #### Register Admin or User
 
 ```http
@@ -91,27 +95,36 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
   GET /portal/v1/admin/assignments
 ```
 
-| Header          | Type     | Description                             |
-| --------------- | -------- | --------------------------------------- |
-| Authorization   | string   | **Required**. Bearer token for authorization |
-
-
 #### Accept or Reject an assignment.
 
 ```http
  GET /portal/v1/admin/assignments/:id/:action
 ```
 
-| Header          | Type     | Description                             |
-| --------------- | -------- | --------------------------------------- |
-| Authorization   | string   | **Required**. Bearer token for authorization |
-
 | Path Parameter        | Type     | Description                             |
 | ---------------  | -------- | --------------------------------------- |
 | `id`             | string   | **Required**. The ID of the assignment   |
 | `action`         | string   | **Required**. The action to perform (`accept`, `reject`) |
 
+####  Upload an assignment.
 
+```http
+  POST /portal/v1/user/upload
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `userId` | `string` | **Required** |
+| `assignmentId` | `string` | **Required** |
+| `assignmentContent` | `string` | **Required**|
+| `adminId` | `string` | **Required** |
+
+
+#### Fetch all admins
+
+```http
+ GET /portal/v1/user/admins
+```
 
 
 ## Frontend
