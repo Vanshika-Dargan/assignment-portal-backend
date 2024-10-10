@@ -1,4 +1,4 @@
-import AssignmentModel from "../../assignment/models/assignment-model";
+import AssignmentModel from "../../assignment/models/assignment-model.js";
 
 export const getAssignmentsTagged = async (req, res, next) => {
   try {

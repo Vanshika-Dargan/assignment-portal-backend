@@ -8,13 +8,15 @@ import bcrypt from 'bcrypt';
 
 export const register = async (req, res, next) => {
   const { name, email, password, confirmPassword, role } = req.body;
-
+  if(!role){
+    return res.status(404).json({message:'role is required, youare user or admin?'});
+  }
   let Model = role === 'admin' ? AdminModel : UserModel;
 
   try {
     const existingUser = await Model.findOne({ email });
     if (existingUser) {
-      return res.status(404).json({ message: 'User already exists. Please Log In' });
+      return res.status(409).json({ message: 'User already exists. Please log in.' });
     }
 
     if (password !== confirmPassword) {
@@ -23,22 +25,23 @@ export const register = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await Model.create({
+
+    const model = await Model.create({
       email,
       name,
       password: hashedPassword,
     });
 
-    const { _id, email: userEmail } = user;
-    const token = jwt.sign({ _id, email: userEmail, role }, process.env.JWT_SECRET, {
+    const { _id } = model;
+    const token = jwt.sign({ _id, email, role }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY,
     });
 
     res.status(201).json({
-      message: 'User registration success',
+      message: `${role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()} registration success`,
       data: {
         token,
-        user,
+        model,
       },
     });
   } catch (error) {
@@ -51,6 +54,9 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { type,role } = req.body;
+    if(!role){
+      return res.status(404).json({message:'role is required, youare user or admin?'});
+    }
     const loginMethod = type==='google'?'google':'custom';
     let Model = role === 'admin' ? AdminModel : UserModel;
     if(type==='google'){
@@ -62,7 +68,7 @@ export const login = async (req, res, next) => {
 
     const {email,name,picture}=googleUserData.data;
 
-    let user=await Model.findOne({email});
+    let model=await Model.findOne({email});
       if (!user) {
         user = await Model.create({
           email,
@@ -70,8 +76,8 @@ export const login = async (req, res, next) => {
           picture,
           loginMethod,
         });
-        const {_id,userId} = user;
-        const token = jwt.sign({_id,email,userId},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRY});
+        const {_id} = model;
+        const token = jwt.sign({_id,email},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRY});
     return res.status(201).json({ message: 'user login successful', data:{token,user}});
     }
     else{
