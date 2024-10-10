@@ -1,6 +1,7 @@
 import UserModel from "../models/user-model.js";
 import AdminModel from "../../admin/models/admin-model.js";
 import AssignmentModel from "../../assignment/models/assignment-model.js";
+import { excludeFields } from "../../../shared/utilities/response-modifier.js";
 
 export const uploadAssignment = async (req, res,next) => {
   const { userId, assignmentId, assignmentContent, adminId } = req.body;
@@ -56,11 +57,11 @@ export const uploadAssignment = async (req, res,next) => {
 
 
 
-export const fetchAllAdmins = async (req, res) => {
+export const fetchAllAdmins = async (req, res, next) => {
   try {
     const admins = await AdminModel.find();
-    res.status(200).json(admins);
+    return res.status(200).json(excludeFields(admins));
   } catch (error) {
-    res.status(500).json({ message: "Error fetching admins", error });
+   next(error)
   }
 };
