@@ -41,17 +41,16 @@ export const getAssignmentsTagged = async (req, res, next) => {
 
 export const updateAssignmentStatus = async (req, res, next) => {
     try {
-      const {action} = req.params;
-      const {assignmentId,adminId} = req.body;
+      const {action,id} = req.params;
+      const adminId = req.token[['adminId']];
 
-  
       const assignment = await AssignmentModel.findOne({
-        assignmentId,
+        "_id":id,
         "submissions.submittedTo": adminId,
       });
   
       if (!assignment) {
-        return res.status(404).json({ message: "Assignment not found or not tagged to this admin." });
+        return res.status(404).json({ message: adminId });
       }
   
       if (action !== "accept" && action !== "reject") {
