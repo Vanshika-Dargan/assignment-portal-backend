@@ -97,13 +97,17 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
 #### Accept or Reject an assignment.
 
 ```http
- GET /portal/v1/admin/assignments/:id/:action
+ POST /portal/v1/admin/assignments/:id/:action
 ```
 
 | Path Parameter        | Type     | Description                             |
 | ---------------  | -------- | --------------------------------------- |
 | `id`             | string   | **Required**. The ID of the assignment   |
 | `action`         | string   | **Required**. The action to perform (`accept`, `reject`) |
+
+| Parameter        | Type     | Description                             |
+| ---------------  | -------- | --------------------------------------- |
+| `feedback`             | string   | **Optional** |
 
 ####  Upload an assignment.
 
