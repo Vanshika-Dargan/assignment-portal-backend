@@ -13,7 +13,7 @@ export const register = async (req, res, next) => {
   const result = authSchema.validate({name, email,password});
 
 if (result.error) {
-  res.status(400).json({error:result.error.details});
+  return res.status(400).json({error:result.error.details});
 } 
   
   if(!role){
