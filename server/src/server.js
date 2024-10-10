@@ -7,6 +7,7 @@ import { adminRoutes } from './modules/admin/routes/admin-route.js';
 import { assignmentRoutes } from './modules/assignment/routes/assignment-route.js';
 import customError from './shared/error_handler/custom-error.js';
 import globalErrorHandler from './shared/error_handler/global-error-handler.js';
+import { authRoutes } from './shared/auth/routes/auth-routes.js';
 dotenv.config();
 
 const DB_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME;
@@ -27,11 +28,12 @@ app.get('/', (req, res) => {
   res.send('Connected to Portal Server...')
   })
 
-router.use('/user', userRoutes);
-router.use('/admin', adminRoutes);
-router.use('/assignment', assignmentRoutes);
+router.use('/v1/auth',authRoutes);
+router.use('/v1/user', userRoutes);
+router.use('/v1/admin', adminRoutes);
+router.use('/v1/assignment', assignmentRoutes);
 
-app.use('/portal/v1', router);
+app.use('/portal', router);
 app.all('*',(req,res,next)=>{
   const error= new customError(404,`${req.originalUrl} does not exist`);
   next(error);
