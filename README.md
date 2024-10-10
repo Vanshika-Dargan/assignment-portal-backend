@@ -125,6 +125,23 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
  GET /portal/v1/user/admins
 ```
 
+####  Create an assignment
+
+```http
+  POST portal/v1/assignment/create
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `title` | `string` | **Required** |
+| `subtitle` | `string` | **Optional** |
+| `description` | `string` | **Optional**|
+| `dueDate` | `string` | **Required** |
+| `maxMarks` | `string` | **Optional** |
+| `assignedBy` | `string` | **Required**|
+| `fileName` | `string` | **Optional** |
+| `fileUrl` | `string` | **Optional** |
+
 ## Package Info
 
 1. **bcrypt** - Password hashing.
