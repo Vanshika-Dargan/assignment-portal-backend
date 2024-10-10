@@ -57,22 +57,28 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { type,role,email,password,code } = req.body;
+    
     if(!role){
       return res.status(404).json({message:'role is required, youare user or admin?'});
     }
     const loginMethod = type==='google'?'google':'custom';
     let Model = role === 'admin' ? AdminModel : UserModel;
+    let typeId = role === 'admin' ? 'adminId': 'userId'
 
     if(type==='google'){
+    
     const {tokens} = await oauthClient.getToken(code);
     oauthClient.setCredentials(tokens);
 
     const googleUserData=await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`);
 
     const {email,name,picture}=googleUserData.data;
-
+    
     let model=await Model.findOne({email});
-      if (!model) {
+    if(model){
+    return res.status(400).json({message: 'User already exists'});
+    }
+      else {
         model = await Model.create({
           email,
           name,
@@ -90,7 +96,7 @@ export const login = async (req, res, next) => {
           return res.status(404).json({ message: 'User not found. Please register.' });
       }
 
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await bcrypt.compare(password, model.password);
       if (!isPasswordValid) {
           return res.status(401).json({ message: 'Invalid password' });
       }

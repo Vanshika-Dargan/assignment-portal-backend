@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { verifyToken } from '../../utilities/token';
+import { verifyToken } from '../../utilities/token.js';
 
 const authMiddleware = (req, res, next) => {
     const bearerToken = req.headers.authorization;
