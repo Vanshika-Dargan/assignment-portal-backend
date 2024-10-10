@@ -24,7 +24,13 @@ export const uploadAssignment = async (req, res,next) => {
     if (!assignment) {
       return res.status(404).json({ message: "Assignment not found" });
     }
-
+    
+    // Check if user has not already uploaded the assignment 
+    const hasUploaded = assignment.submissions.some(submission => submission.userId.toString() === userId);
+    if (hasUploaded) {
+      return res.status(400).json({ message: "User has already uploaded this assignment" });
+    }
+    
     // Check if submission date is valid
     if (new Date() > assignment.dueDate) {
       return res.status(400).json({ message: "Submission date exceeds due date" });
