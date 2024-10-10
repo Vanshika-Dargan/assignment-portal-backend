@@ -1,3 +1,4 @@
+import { modifyResData } from "../../../shared/utilities/response-modifier.js";
 import AssignmentModel from "../models/assignment-model.js";
 
 export const createAssignment = async (req, res, next) => {
@@ -17,7 +18,7 @@ export const createAssignment = async (req, res, next) => {
         }
       });
    
-      res.status(201).json({ message: "Assignment created successfully", data: assignment });
+      res.status(201).json({ message: "Assignment created successfully", data: modifyResData(assignment,'assignmentId') });
     } catch (error) {
       next(error);
     }
