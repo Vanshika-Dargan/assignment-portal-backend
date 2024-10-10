@@ -85,6 +85,33 @@ MONGO_TEST='your mongodb cloud atlas url goes here'
 | `email`      | `string` | **Required** for type 'custom' |
 | `password`      | `string` | **Required**. for type 'custom' |
 
+#### View assignments tagged to the admin.
+
+```http
+  GET /portal/v1/admin/assignments
+```
+
+| Header          | Type     | Description                             |
+| --------------- | -------- | --------------------------------------- |
+| Authorization   | string   | **Required**. Bearer token for authorization |
+
+
+#### Accept or Reject an assignment.
+
+```http
+ GET /portal/v1/admin/assignments/:id/:action
+```
+
+| Header          | Type     | Description                             |
+| --------------- | -------- | --------------------------------------- |
+| Authorization   | string   | **Required**. Bearer token for authorization |
+
+| Path Parameter        | Type     | Description                             |
+| ---------------  | -------- | --------------------------------------- |
+| `id`             | string   | **Required**. The ID of the assignment   |
+| `action`         | string   | **Required**. The action to perform (`accept`, `reject`) |
+
+
 
 
 ## Frontend
