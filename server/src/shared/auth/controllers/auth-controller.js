@@ -3,7 +3,7 @@ import AdminModel from "../../../modules/admin/models/admin-model.js";
 import { oauthClient } from "../config/google-oath-config.js";
 import axios from 'axios';
 import bcrypt from 'bcrypt';
-import { excludeFields } from "../../utilities/response-modifier.js";
+import { modifyResData } from "../../utilities/response-modifier.js";
 import { generateToken } from "../../utilities/token.js";
 import { registerSchema} from "../validations/auth-validation.js";
 import customError from "../../error_handler/custom-error.js";
@@ -27,7 +27,7 @@ export const register = async (req, res, next) => {
     if (existingUser) {
       return res.status(409).json({ message: 'User already exists. Please log in.' });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
 
@@ -41,7 +41,7 @@ export const register = async (req, res, next) => {
     let typeId = role === 'admin' ? 'adminId': 'userId'
     const token = generateToken({[typeId]: _id, email, role });
 
-    model = excludeFields(model);
+    model = modifyResData(model,typeId);
     
 
     res.status(201).json({

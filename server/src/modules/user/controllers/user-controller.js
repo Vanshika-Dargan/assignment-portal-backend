@@ -1,7 +1,7 @@
 import UserModel from "../models/user-model.js";
 import AdminModel from "../../admin/models/admin-model.js";
 import AssignmentModel from "../../assignment/models/assignment-model.js";
-import { excludeFields } from "../../../shared/utilities/response-modifier.js";
+import { modifyResData } from "../../../shared/utilities/response-modifier.js";
 
 export const uploadAssignment = async (req, res,next) => {
   const { userId, assignmentId, assignmentContent, adminId } = req.body;
@@ -60,7 +60,7 @@ export const uploadAssignment = async (req, res,next) => {
 export const fetchAllAdmins = async (req, res, next) => {
   try {
     const admins = await AdminModel.find();
-    return res.status(200).json(excludeFields(admins));
+    return res.status(200).json(modifyResData(admins));
   } catch (error) {
    next(error)
   }

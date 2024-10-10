@@ -1,4 +1,4 @@
-export const excludeFields = (input, fieldsToExclude = []) => {
+export const modifyResData = (input,  id= '_id', fieldsToExclude = []) => {
 
     const filterUser = (user) => {
         if (!user || typeof user.toObject !== 'function') {
@@ -6,8 +6,8 @@ export const excludeFields = (input, fieldsToExclude = []) => {
         }
         const userObj = user.toObject();
         const filteredRes = Object.keys(userObj).reduce((acc, key) => {
-            if (!fieldsToExclude.includes(key) && key !== 'password') {
-                acc[key] = userObj[key]; 
+            if (!fieldsToExclude.includes(key) && key !== 'password' && key!=='createdAt' && key!=='updatedAt' && key !=='__v') {
+                acc[key === '_id' ? id : key] = userObj[key];
             }
             return acc;
         }, {});
