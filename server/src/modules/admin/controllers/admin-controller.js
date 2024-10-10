@@ -23,6 +23,7 @@ export const updateAssignmentStatus = async (req, res, next) => {
     try {
       const {action,id} = req.params;
       const adminId = req.token['adminId'];
+      const {feedback} = req.body;
 
       const assignment = await AssignmentModel.findOne({
         "_id":id,
@@ -30,7 +31,7 @@ export const updateAssignmentStatus = async (req, res, next) => {
       });
   
       if (!assignment) {
-        return res.status(404).json({ message: 'Assignment not found' });
+        return res.status(404).json({ message: req.token });
       }
   
       if (action !== "accept" && action !== "reject") {
@@ -47,6 +48,7 @@ export const updateAssignmentStatus = async (req, res, next) => {
       }
   
       submission.status = action;
+      submission.feedback = feedback;
       await assignment.save();
   
       res.status(200).json({ message: `Assignment ${action}ed successfully.`, assignment });

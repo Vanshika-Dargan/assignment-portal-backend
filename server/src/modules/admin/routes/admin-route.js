@@ -5,5 +5,5 @@ export const adminRoutes = express.Router();
 
 
 adminRoutes.get("/assignments",authMiddleware, getAssignmentsTagged );
-adminRoutes.get("/assignments/:id/:action", authMiddleware,updateAssignmentStatus);
+adminRoutes.post("/assignments/:id/:action", authMiddleware,updateAssignmentStatus);
 
