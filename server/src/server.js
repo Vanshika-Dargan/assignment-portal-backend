@@ -8,7 +8,7 @@ import { assignmentRoutes } from './modules/assignment/routes/assignment-route.j
 import customError from './shared/error_handler/custom-error.js';
 import globalErrorHandler from './shared/error_handler/global-error-handler.js';
 import { authRoutes } from './shared/auth/routes/auth-routes.js';
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 const DB_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME;
 const DB_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD;
