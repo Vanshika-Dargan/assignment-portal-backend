@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { verifyToken } from '../../utilities/token';
 
 const authMiddleware = (req, res, next) => {
     const bearerToken = req.headers.authorization;
@@ -14,15 +15,10 @@ const authMiddleware = (req, res, next) => {
         });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            console.error('Invalid token:', err.message);
-            return res.status(401).json({ error: "Invalid token" });
-        }
-
+        const decoded=verifyToken(token);
         req.token = decoded; 
         next(); 
-    });
+    
 };
 
 export default authMiddleware;

@@ -2,8 +2,9 @@ import UserModel from "../../../modules/user/models/user-model.js";
 import AdminModel from "../../../modules/admin/models/admin-model.js";
 import { oauthClient } from "../config/google-oath-config.js";
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { excludeFields } from "../../utilities/response-modifier.js";
+import { generateToken } from "../../utilities/token.js";
 
 
 export const register = async (req, res, next) => {
@@ -26,7 +27,7 @@ export const register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
 
-    const model = await Model.create({
+    let model = await Model.create({
       email,
       name,
       password: hashedPassword,
@@ -34,15 +35,16 @@ export const register = async (req, res, next) => {
 
     const { _id } = model;
     let typeId = role === 'admin' ? 'adminId': 'userId'
-    const token = jwt.sign({[typeId]: _id, email, role }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRY,
-    });
+    const token = generateToken({[typeId]: _id, email, role });
+
+    model = excludeFields(model);
+    
 
     res.status(201).json({
       message: `${role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()} registration success`,
       data: {
         token,
-        model,
+        data: model
       },
     });
   } catch (error) {
@@ -78,7 +80,7 @@ export const login = async (req, res, next) => {
           loginMethod,
         });
         const {_id} = model;
-        const token = jwt.sign({_id,email},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRY});
+        const token = generateToken({_id,email});
     return res.status(201).json({ message: 'user login successful', data:{token,user}});
     }
     else{
