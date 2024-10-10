@@ -1,13 +1,8 @@
 import UserModel from "../models/user-model.js";
 import AdminModel from "../../admin/models/admin-model.js";
-import { oauthClient } from "../../../shared/auth/google-oath-config.js";
-import axios from 'axios';
 import AssignmentModel from "../../assignment/models/assignment-model.js";
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 
-
-export const uploadAssignment = async (req, res) => {
+export const uploadAssignment = async (req, res,next) => {
   const { userId, assignmentId, assignmentContent, adminId } = req.body;
   
   try {
@@ -30,7 +25,7 @@ export const uploadAssignment = async (req, res) => {
     }
 
     // Check if submission date is valid
-    if (!submissionDate || new Date() > assignment.dueDate) {
+    if (new Date() > assignment.dueDate) {
       return res.status(400).json({ message: "Submission date exceeds due date" });
     }
 
@@ -55,7 +50,7 @@ export const uploadAssignment = async (req, res) => {
     res.status(201).json({ message: "Assignment submitted successfully", submission: newSubmission });
 
   } catch (error) {
-    res.status(400).json({ message: "Error uploading assignment", error });
+    next(error);
   }
 };
 

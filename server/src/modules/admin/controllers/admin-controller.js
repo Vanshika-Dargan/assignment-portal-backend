@@ -1,17 +1,39 @@
 import AssignmentModel from "../../assignment/models/assignment-model.js";
+import jwt from 'jsonwebtoken';
 
 export const getAssignmentsTagged = async (req, res, next) => {
   try {
-    const { adminId } = req.body;
+    const bearerToken=req.headers.authorization;
+    let token;
+    let decodedToken;
+    if(bearerToken && bearerToken.startsWith('Bearer')){
+        token=bearerToken.split(' ')[1];
+     }
+     if(!token){
+         return res.status(400).json({
+             error: "Unauthorized request"
+         })
+     }
+     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          console.error('Invalid token:', err.message);
+        } else {
+          decodedToken = decoded;
+        }
+      });
+      if(decodedToken['role'] === 'user' || !decodedToken['adminId']){
+      return res.json(400).json({message: 'Unauthorized request'});
+      }
+    const adminId = decodedToken['adminId'];
     const assignments = await AssignmentModel.find({
         "submissions.submittedTo": adminId,
       });
 
     if (assignments.length === 0) {
-      return res.status(404).json({ message: "No assignments found for this admin." });
+      return res.status(404).json({ message: adminId });
     }
 
-   return res.status(200).json(assignments);
+ return res.status(200).json({data: assignments});
   } catch (error) {
     next(error);
   }

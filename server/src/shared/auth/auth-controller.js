@@ -33,7 +33,8 @@ export const register = async (req, res, next) => {
     });
 
     const { _id } = model;
-    const token = jwt.sign({ _id, email, role }, process.env.JWT_SECRET, {
+    let typeId = role === 'admin' ? 'adminId': 'userId'
+    const token = jwt.sign({[typeId]: _id, email, role }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY,
     });
 

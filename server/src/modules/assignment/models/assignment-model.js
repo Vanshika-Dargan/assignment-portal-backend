@@ -42,7 +42,7 @@ const submissionSchema = new mongoose.Schema({
         type: String,
         enum: ['accept', 'reject'],
     },
-});
+},{timestamps: true});
 
 const assignmentSchema = new mongoose.Schema({
     id: {
