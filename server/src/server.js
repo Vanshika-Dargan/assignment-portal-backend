@@ -5,7 +5,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { adminRoutes } from './modules/admin/routes/admin-route.js';
 import { assignmentRoutes } from './modules/assignment/routes/assignment-route.js';
-
+import customError from './shared/error_handler/custom-error.js';
+import globalErrorHandler from './shared/error_handler/global-error-handler.js';
 dotenv.config();
 
 const DB_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME;
@@ -31,6 +32,11 @@ router.use('/admin', adminRoutes);
 router.use('/assignment', assignmentRoutes);
 
 app.use('/portal/v1', router);
+app.all('*',(req,res,next)=>{
+  const error= new customError(404,`${req.originalUrl} does not exist`);
+  next(error);
+})
+app.use(globalErrorHandler);
 
 async function main() {
     try{
