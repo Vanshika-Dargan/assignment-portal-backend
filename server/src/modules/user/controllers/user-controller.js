@@ -1,6 +1,6 @@
 import UserModel from "../models/user-model.js";
 import AdminModel from "../../admin/models/admin-model.js";
-import { oauthClient } from "../../../shared/google-oath-config.js";
+import { oauthClient } from "../../../shared/auth/google-oath-config.js";
 import axios from 'axios';
 import AssignmentModel from "../../assignment/models/assignment-model.js";
 import jwt from 'jsonwebtoken';

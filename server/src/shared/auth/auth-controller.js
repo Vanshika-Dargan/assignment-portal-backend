@@ -1,6 +1,6 @@
 import UserModel from "../../modules/user/models/user-model.js";
 import AdminModel from "../../modules/admin/models/admin-model.js";
-import { oauthClient } from "../google-oath-config.js";
+import { oauthClient } from "./google-oath-config.js";
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
