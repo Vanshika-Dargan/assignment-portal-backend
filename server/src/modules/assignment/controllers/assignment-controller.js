@@ -2,9 +2,14 @@ import { modifyResData } from "../../../shared/utilities/response-modifier.js";
 import AssignmentModel from "../models/assignment-model.js";
 
 export const createAssignment = async (req, res, next) => {
-    const { title, subtitle, description, dueDate, maxMarks, assignedBy, fileName, fileUrl } = req.body;
-   
+    const { title, subtitle, description, dueDate, maxMarks, fileName, fileUrl } = req.body;
+   let assignedBy;
     try {
+      if(!req.token['adminId']){
+        return res.status(400).json({error:'Only admins can create assignment'});
+      }
+      assignedBy = req.token['adminId'];
+      
       const assignment = await AssignmentModel.create({
         title,
         subtitle,
@@ -18,7 +23,7 @@ export const createAssignment = async (req, res, next) => {
         }
       });
    
-      res.status(201).json({ message: "Assignment created successfully", data: modifyResData(assignment,'assignmentId') });
+      res.status(201).json({ token: req.token ,message: "Assignment created successfully", data: modifyResData(assignment,'assignmentId') });
     } catch (error) {
       next(error);
     }
