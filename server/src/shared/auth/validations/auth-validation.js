@@ -42,3 +42,20 @@ export const registerSchema = authSchema.keys({
 
 
 export const loginSchema = authSchema;
+
+export const loginWithGoogleSchema = Joi.object({
+    role: Joi.string()
+      .valid('admin', 'user')
+      .required()
+      .messages({
+        'any.only': 'Role must be either "admin" or "user".',
+        'any.required': 'Role is required.',
+      }),
+    type: Joi.string()
+    .valid('google', 'custom')
+    .required()
+    .messages({
+      'any.only': 'Type could either be google or custom ".',
+      'any.required': 'Type is required.',
+    }),
+})

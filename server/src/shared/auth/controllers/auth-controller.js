@@ -5,7 +5,7 @@ import axios from 'axios';
 import bcrypt from 'bcrypt';
 import { modifyResData } from "../../utilities/response-modifier.js";
 import { generateToken } from "../../utilities/token.js";
-import { registerSchema, loginSchema} from "../validations/auth-validation.js";
+import { registerSchema, loginSchema, loginWithGoogleSchema} from "../validations/auth-validation.js";
 import customError from "../../error_handler/custom-error.js";
 
 
@@ -60,17 +60,20 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { type,role,email,password,code } = req.body;
-    
-    if(!role){
-      return res.status(404).json({message:'role is required, youare user or admin?'});
+
+    const { type,role } = req.body;
+    const result = loginWithGoogleSchema.validate({type,role});
+    if (result.error) {
+      const errorMessages = result.error.details.map(err => err.message);
+      const error= new customError(400,errorMessages);
+      next(error);
     }
-    const loginMethod = type==='google'?'google':'custom';
+    
     let Model = role === 'admin' ? AdminModel : UserModel;
     let typeId = role === 'admin' ? 'adminId': 'userId'
 
     if(type==='google'){
-    
+      const {code } = req.body;
     const {tokens} = await oauthClient.getToken(code);
     oauthClient.setCredentials(tokens);
 
@@ -87,7 +90,7 @@ export const login = async (req, res, next) => {
           email,
           name,
           picture,
-          loginMethod,
+          loginMethod:type,
         });
         const {_id} = model;
         const token = generateToken({[typeId]: _id,email});
