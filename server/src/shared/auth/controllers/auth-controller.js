@@ -5,10 +5,17 @@ import axios from 'axios';
 import bcrypt from 'bcrypt';
 import { excludeFields } from "../../utilities/response-modifier.js";
 import { generateToken } from "../../utilities/token.js";
+import { authSchema } from "../validations/auth-validation.js";
 
 
 export const register = async (req, res, next) => {
   const { name, email, password, confirmPassword, role } = req.body;
+  const result = authSchema.validate({name, email,password});
+
+if (result.error) {
+  res.status(400).json({error:result.error.details});
+} 
+  
   if(!role){
     return res.status(404).json({message:'role is required, youare user or admin?'});
   }
