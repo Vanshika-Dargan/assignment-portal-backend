@@ -1,15 +1,16 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 const attachmentSchema = new mongoose.Schema({
     fileName: {
         type: String,
-        required: true,
+        required: false,
     },
     fileUrl: {
         type: String,
-        required: true,
+        required: false,
     },
-}, { _id: false });
+});
 
 const submissionSchema = new mongoose.Schema({
     userId: {
@@ -41,24 +42,19 @@ const submissionSchema = new mongoose.Schema({
         type: String,
         enum: ['accept', 'reject'],
     },
-}, { _id: false });
+});
 
 const assignmentSchema = new mongoose.Schema({
     id: {
-        type: Number,
-        required: true,
-        unique: true,
-    },
-    assignmentId: {
         type: String,
-        required: true,
+        default: uuidv4,
         unique: true,
     },
-    heading: {
+    title: {
         type: String,
         required: true,
     },
-    subheading: {
+    subtitle: {
         type: String,
         required: false,
     },
@@ -73,28 +69,17 @@ const assignmentSchema = new mongoose.Schema({
     maxMarks: {
         type: Number,
         required: true,
+        default: 100
     },
     assignedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin', 
         required: true,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: [Date], 
-    },
     attachments: [attachmentSchema],
     submissions: [submissionSchema],
-});
+},{timestamps: true});
 
-
-assignmentSchema.pre('save', function (next) {
-    this.updatedAt.push(Date.now());
-    next();
-});
 
 
 const AssignmentModel = mongoose.model('Assignment', assignmentSchema);

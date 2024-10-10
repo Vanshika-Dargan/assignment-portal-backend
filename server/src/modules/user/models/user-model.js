@@ -2,19 +2,10 @@ import mongoose, { Schema } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
 const userSchema = new Schema({
-    userId: {
+    id: {
         type: String,
         default: uuidv4,
         unique: true,
-      },
-      id: {
-        type: Number,
-        unique: true,
-      },
-      password: { 
-        type: String, 
-        required: true, 
-        minLength: 8 
       },
       name: {
         type: String,
@@ -25,6 +16,11 @@ const userSchema = new Schema({
         required: true,
         unique: true,
         match: /.+\@.+\..+/,
+      },
+      password: { 
+        type: String, 
+        required: true, 
+        minLength: 8 
       },
       picture: {
         type: String, 

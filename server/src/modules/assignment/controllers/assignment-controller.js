@@ -1,13 +1,28 @@
 import AssignmentModel from "../models/assignment-model.js";
 
-export const createAssignment = async (req, res) => {
-  try {
-    const assignment = await AssignmentModel.create(req.body);
-    res.status(201).json({ message: "Assignment created successfully", data: assignment });
-  } catch (error) {
-    res.status(400).json({ message: "Error creating assignment", error: error.message });
-  }
-};
+export const createAssignment = async (req, res, next) => {
+    const { title, subtitle, description, dueDate, maxMarks, assignedBy, fileName, fileUrl } = req.body;
+   
+    try {
+      const assignment = await AssignmentModel.create({
+        title,
+        subtitle,
+        description,
+        dueDate,
+        maxMarks,
+        assignedBy,
+        attachementSchema: {
+          fileName,
+          fileUrl
+        }
+      });
+   
+      res.status(201).json({ message: "Assignment created successfully", data: assignment });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
 
 export const getAssignmentById = async (req, res) => {
   try {

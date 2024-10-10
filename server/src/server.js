@@ -4,6 +4,7 @@ import { userRoutes } from './modules/user/routes/user-route.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { adminRoutes } from './modules/admin/routes/admin-route.js';
+import { assignmentRoutes } from './modules/assignment/routes/assignment-route.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
   })
 app.use('/',userRoutes);
 app.use('/',adminRoutes);
+app.use('/portal/v1/assignment',assignmentRoutes);
 
 
 async function main() {
